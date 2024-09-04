@@ -1,15 +1,26 @@
-import React from "react";
 import { ScrollView, View, Text, Pressable, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { getDatabase } from "@/src/database/database";
 
-interface Product {
+export interface Product {
     id: number;
     descricao: string;
     quantidade: number;
-    preco: number;
 }
 
-export default function ProdutosEstoque({ products }: { products: Product[] }) {
+interface ProdutosEstoqueProps {
+    products: Product[];
+    removeProduct: (id: number) => Promise<void>;
+    updateProductAdd: (id: number) => Promise<void>;
+    updateProductRemove: (id: number) => Promise<void>;
+}
+
+export default function ProdutosEstoque({
+    products,
+    removeProduct,
+    updateProductAdd,
+    updateProductRemove,
+}: ProdutosEstoqueProps) {
     return (
         <ScrollView
             showsVerticalScrollIndicator={false}
@@ -23,9 +34,9 @@ export default function ProdutosEstoque({ products }: { products: Product[] }) {
                         </Text>
                         <View style={styles.iconContainer}>
                             <Pressable
-                                onPress={() =>
-                                    console.log("Adicionar produto", product.id)
-                                }
+                                onPress={async () => {
+                                    await updateProductAdd(product.id);
+                                }}
                             >
                                 <Ionicons
                                     style={styles.icons}
@@ -33,9 +44,13 @@ export default function ProdutosEstoque({ products }: { products: Product[] }) {
                                 />
                             </Pressable>
                             <Pressable
-                                onPress={() =>
-                                    console.log("Remover produto", product.id)
-                                }
+                                onPress={async () => {
+                                    if (product.quantidade > 1) {
+                                        await updateProductRemove(product.id);
+                                    } else {
+                                        await removeProduct(product.id);
+                                    }
+                                }}
                             >
                                 <Ionicons
                                     style={styles.icons}
@@ -44,10 +59,6 @@ export default function ProdutosEstoque({ products }: { products: Product[] }) {
                             </Pressable>
                         </View>
                     </View>
-                    <View style={styles.separator} />
-                    <Text style={styles.productPrice}>
-                        Preço do produto: R${product.preco.toFixed(2)}
-                    </Text>
                 </View>
             ))}
         </ScrollView>
@@ -69,7 +80,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
-        elevation: 5, // Adiciona sombra para efeito de profundidade em Android
+        elevation: 7, // Adiciona sombra para efeito de profundidade em Android
     },
     contentProduct: {
         width: "100%",
@@ -80,7 +91,7 @@ const styles = StyleSheet.create({
     productDescription: {
         color: "#47204A",
         fontSize: 26,
-        fontWeight: "bold",
+        fontWeight: "500",
     },
     icons: {
         color: "#47204A",
@@ -89,15 +100,5 @@ const styles = StyleSheet.create({
     iconContainer: {
         flexDirection: "row",
         alignItems: "center",
-    },
-    separator: {
-        width: "100%",
-        height: 1,
-        backgroundColor: "#E0E0E0",
-        marginVertical: 10,
-    },
-    productPrice: {
-        fontSize: 20,
-        color: "#47204A",
     },
 });

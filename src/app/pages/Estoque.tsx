@@ -1,26 +1,140 @@
 import { useEffect, useState } from "react";
-import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
-import ProdutosEstoque from "../components/ProdutosEstoque";
-
-export interface product {
-    id: number;
-    quantidade: number;
-    descricao: string;
-    preco: number;
-}
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    Pressable,
+    Keyboard,
+} from "react-native";
+import ProdutosEstoque, { Product } from "../components/ProdutosEstoque";
+import * as SQLite from "expo-sqlite";
+import { getDatabase } from "@/src/database/database";
+import {
+    addProductStatement,
+    createTable,
+    deleteProductStatemente,
+    getProducts,
+} from "@/src/database/queries";
 
 export function Estoque() {
-    const [products, setProducts] = useState<product[]>([
-        { id: 1, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 2, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 3, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 4, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 5, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 6, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 7, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 8, quantidade: 10, descricao: "polpa de acerola", preco: 6 },
-        { id: 9, quantidade: 11, descricao: "polpa de acerola", preco: 6 },
-    ]);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [descricao, setDescricao] = useState("");
+    const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null);
+
+    useEffect(() => {
+        async function setup() {
+            try {
+                const database = await getDatabase();
+                setDb(database);
+
+                await createTable();
+                console.log("Tabela criada");
+
+                const data = await getProducts();
+
+                if (data && data.length > 0) {
+                    setProducts(data);
+                }
+            } catch (error) {
+                console.error("Erro ao configurar o banco de dados:", error);
+            }
+        }
+
+        setup();
+    }, []);
+
+    const addProduct = async (descricao: string) => {
+        if (!db) {
+            console.error("Banco de dados não inicializado");
+            return;
+        }
+
+        try {
+            const statement = await addProductStatement(descricao);
+            console.log("Declaração SQL preparada");
+
+            await statement.executeAsync({ $descricao: descricao });
+            console.log("Produto adicionado");
+
+            const updateProducts = await getProducts();
+
+            if (updateProducts && updateProducts.length > 0) {
+                setProducts(updateProducts);
+            }
+
+            Keyboard.dismiss();
+            setDescricao("");
+        } catch (error) {
+            console.error("Erro ao adicionar produto:", error);
+        }
+    };
+
+    const removeProduct = async (id: number) => {
+        if (!db) {
+            console.error("Banco de dados não inicializado");
+            return;
+        }
+
+        try {
+            const statement = await deleteProductStatemente();
+
+            await statement.executeAsync({ $id: id });
+            await statement.finalizeAsync();
+
+            const updateProducts = await getProducts();
+
+            setProducts(updateProducts);
+        } catch (error) {
+            console.error("Erro ao remover produto:", error);
+        }
+    };
+
+    const updateProductAdd = async (id: number) => {
+        if (!db) {
+            console.error("Banco de dados não inicializado");
+            return;
+        }
+
+        try {
+            const statement = await db.prepareAsync(
+                "UPDATE estoque SET quantidade = quantidade + 1 WHERE id = $id",
+            );
+
+            await statement.executeAsync({ $id: id });
+
+            await statement.finalizeAsync();
+
+            const updateProducts = await getProducts();
+
+            setProducts(updateProducts);
+        } catch (error) {
+            console.error("Erro ao atualizar produto:", error);
+        }
+    };
+
+    const updateProductRemove = async (id: number) => {
+        if (!db) {
+            console.error("Banco de dados não inicializado");
+            return;
+        }
+
+        try {
+            const statement = await db.prepareAsync(
+                "UPDATE estoque SET quantidade = quantidade - 1 WHERE id = $id",
+            );
+
+            await statement.executeAsync({ $id: id });
+
+            await statement.finalizeAsync();
+
+            const updateProducts = await getProducts();
+
+            setProducts(updateProducts);
+        } catch (error) {
+            console.error("Erro ao atualizar produto:", error);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -29,14 +143,30 @@ export function Estoque() {
                     placeholderTextColor={"#FFF"}
                     placeholder="Digite o novo produto"
                     style={styles.textInput}
+                    onChangeText={(text) => setDescricao(text)}
+                    value={descricao}
                 />
-                <Pressable style={styles.button}>
+                <Pressable
+                    style={styles.button}
+                    onPress={async () => {
+                        try {
+                            await addProduct(descricao);
+                        } catch (error) {
+                            console.log("Erro ao adicionar produto:", error);
+                        }
+                    }}
+                >
                     <Text style={styles.textButton}>ADD</Text>
                 </Pressable>
             </View>
 
             <View style={styles.productsArea}>
-                <ProdutosEstoque products={products} />
+                <ProdutosEstoque
+                    products={products}
+                    removeProduct={removeProduct}
+                    updateProductAdd={updateProductAdd}
+                    updateProductRemove={updateProductRemove}
+                />
             </View>
         </View>
     );
@@ -81,3 +211,4 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
 });
+export { Product };
