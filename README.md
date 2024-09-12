@@ -60,7 +60,7 @@ O **Product Controller** é uma aplicação de controle de estoque desenvolvida 
 
 Você pode baixar e instalar o APK em **FASE DE TESTES** do **Product Controller** diretamente do GitHub. Isso é útil para testar a aplicação sem a necessidade de configurar o ambiente de desenvolvimento.
 
-- [Baixar APK - Versão 1.0.0](https://github.com/SEU_USUARIO/productcontroller/releases/download/v1.0.0/productcontroller.apk)
+- [Baixar APK - Versão 1.0.0](https://github.com/Luis-Moura/productController/releases/tag/1.0.0)
 
 **Nota**: Certifique-se de habilitar a instalação de aplicativos de fontes desconhecidas nas configurações do seu dispositivo Android antes de instalar o APK.
 
