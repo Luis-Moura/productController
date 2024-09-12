@@ -5,6 +5,7 @@ import { Relatorios } from "./pages/Relatorios";
 import { Estoque } from "./pages/Estoque";
 import { Transacoes } from "./pages/Transacoes";
 import { Entypo } from "@expo/vector-icons";
+import { TransacoesProvider } from "./context/TransacoesContext";
 
 const Tab = createBottomTabNavigator();
 
@@ -12,77 +13,87 @@ const { height } = Dimensions.get("window");
 
 export default function Index() {
     return (
-        <NavigationContainer independent={true}>
-            <Tab.Navigator
-                screenOptions={{
-                    tabBarStyle: {
-                        backgroundColor: "#fff",
-                    },
-                    tabBarActiveTintColor: "#47204A",
-                    tabBarInactiveTintColor: "#999",
-                }}
-            >
-                <Tab.Screen
-                    name="Estoque"
-                    component={Estoque}
-                    options={{
-                        headerStyle: {
-                            backgroundColor: "#47204A",
-                            height: height * 0.12,
+        <TransacoesProvider>
+            <NavigationContainer independent={true}>
+                <Tab.Navigator
+                    screenOptions={{
+                        tabBarStyle: {
+                            backgroundColor: "#fff",
                         },
-                        headerTintColor: "#fff",
-                        headerTitleStyle: {
-                            fontWeight: "bold",
-                            fontSize: 22,
-                        },
-                        tabBarIcon: ({ size, color }) => (
-                            <Entypo name="archive" size={size} color={color} />
-                        ),
+                        tabBarActiveTintColor: "#47204A",
+                        tabBarInactiveTintColor: "#999",
                     }}
-                />
+                >
+                    <Tab.Screen
+                        name="Estoque"
+                        component={Estoque}
+                        options={{
+                            headerStyle: {
+                                backgroundColor: "#47204A",
+                                height: height * 0.12,
+                            },
+                            headerTintColor: "#fff",
+                            headerTitleStyle: {
+                                fontWeight: "bold",
+                                fontSize: 22,
+                            },
+                            tabBarIcon: ({ size, color }) => (
+                                <Entypo
+                                    name="archive"
+                                    size={size}
+                                    color={color}
+                                />
+                            ),
+                        }}
+                    />
 
-                <Tab.Screen
-                    name="Transacoes"
-                    component={Transacoes}
-                    options={{
-                        headerStyle: {
-                            backgroundColor: "#47204A",
-                            height: height * 0.12,
-                        },
-                        headerTintColor: "#fff",
-                        headerTitleStyle: {
-                            fontWeight: "bold",
-                            fontSize: 22,
-                        },
-                        tabBarIcon: ({ size, color }) => (
-                            <Entypo name="credit" size={size} color={color} />
-                        ),
-                    }}
-                />
+                    <Tab.Screen
+                        name="Transacoes"
+                        component={Transacoes}
+                        options={{
+                            headerStyle: {
+                                backgroundColor: "#47204A",
+                                height: height * 0.12,
+                            },
+                            headerTintColor: "#fff",
+                            headerTitleStyle: {
+                                fontWeight: "bold",
+                                fontSize: 22,
+                            },
+                            tabBarIcon: ({ size, color }) => (
+                                <Entypo
+                                    name="credit"
+                                    size={size}
+                                    color={color}
+                                />
+                            ),
+                        }}
+                    />
 
-                <Tab.Screen
-                    name="Relatorios"
-                    component={Relatorios}
-                    options={{
-                        headerStyle: {
-                            backgroundColor: "#47204A",
-                            height: height * 0.12,
-                        },
-                        headerTintColor: "#fff",
-                        headerTitleStyle: {
-                            fontWeight: "bold",
-                            fontSize: 22,
-                        },
-                        tabBarIcon: ({ size, color }) => (
-                            <Entypo
-                                name="bar-graph"
-                                size={size}
-                                color={color}
-                            />
-                        ),
-                    }}
-                />
-            </Tab.Navigator>
-        </NavigationContainer>
+                    <Tab.Screen
+                        name="Relatorios"
+                        component={Relatorios}
+                        options={{
+                            headerStyle: {
+                                backgroundColor: "#47204A",
+                                height: height * 0.12,
+                            },
+                            headerTintColor: "#fff",
+                            headerTitleStyle: {
+                                fontWeight: "bold",
+                                fontSize: 22,
+                            },
+                            tabBarIcon: ({ size, color }) => (
+                                <Entypo
+                                    name="bar-graph"
+                                    size={size}
+                                    color={color}
+                                />
+                            ),
+                        }}
+                    />
+                </Tab.Navigator>
+            </NavigationContainer>
+        </TransacoesProvider>
     );
 }

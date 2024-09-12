@@ -1,19 +1,13 @@
-import { ScrollView, View, Text, Pressable, StyleSheet } from "react-native";
+import {
+    ScrollView,
+    View,
+    Text,
+    Pressable,
+    StyleSheet,
+    Alert,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getDatabase } from "@/src/database/database";
-
-export interface Product {
-    id: number;
-    descricao: string;
-    quantidade: number;
-}
-
-interface ProdutosEstoqueProps {
-    products: Product[];
-    removeProduct: (id: number) => Promise<void>;
-    updateProductAdd: (id: number) => Promise<void>;
-    updateProductRemove: (id: number) => Promise<void>;
-}
+import { ProdutosEstoqueProps } from "@/src/models/ProdutosEstoqueProps";
 
 export default function ProdutosEstoque({
     products,
@@ -48,7 +42,24 @@ export default function ProdutosEstoque({
                                     if (product.quantidade > 1) {
                                         await updateProductRemove(product.id);
                                     } else {
-                                        await removeProduct(product.id);
+                                        Alert.alert(
+                                            "Confirmar Remoção",
+                                            "Tem certeza que deseja remover esse item?",
+                                            [
+                                                {
+                                                    text: "Cancelar",
+                                                    style: "cancel",
+                                                },
+                                                {
+                                                    text: "OK",
+                                                    onPress: async () => {
+                                                        await removeProduct(
+                                                            product.id,
+                                                        );
+                                                    },
+                                                },
+                                            ],
+                                        );
                                     }
                                 }}
                             >

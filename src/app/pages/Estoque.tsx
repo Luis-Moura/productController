@@ -7,7 +7,7 @@ import {
     Pressable,
     Keyboard,
 } from "react-native";
-import ProdutosEstoque, { Product } from "../components/ProdutosEstoque";
+import ProdutosEstoque from "../components/ProdutosEstoque";
 import * as SQLite from "expo-sqlite";
 import { getDatabase } from "@/src/database/database";
 import {
@@ -15,7 +15,10 @@ import {
     createTable,
     deleteProductStatemente,
     getProducts,
-} from "@/src/database/queries";
+    updateProductAddStatement,
+    updateProductRemoveStatement,
+} from "@/src/database/estoque/queries";
+import { Product } from "@/src/models/Product";
 
 export function Estoque() {
     const [products, setProducts] = useState<Product[]>([]);
@@ -51,7 +54,7 @@ export function Estoque() {
         }
 
         try {
-            const statement = await addProductStatement(descricao);
+            const statement = await addProductStatement();
             console.log("Declaração SQL preparada");
 
             await statement.executeAsync({ $descricao: descricao });
@@ -97,9 +100,7 @@ export function Estoque() {
         }
 
         try {
-            const statement = await db.prepareAsync(
-                "UPDATE estoque SET quantidade = quantidade + 1 WHERE id = $id",
-            );
+            const statement = await updateProductAddStatement();
 
             await statement.executeAsync({ $id: id });
 
@@ -120,9 +121,7 @@ export function Estoque() {
         }
 
         try {
-            const statement = await db.prepareAsync(
-                "UPDATE estoque SET quantidade = quantidade - 1 WHERE id = $id",
-            );
+            const statement = await updateProductRemoveStatement();
 
             await statement.executeAsync({ $id: id });
 
@@ -134,7 +133,7 @@ export function Estoque() {
         } catch (error) {
             console.error("Erro ao atualizar produto:", error);
         }
-    }
+    };
 
     return (
         <View style={styles.container}>
@@ -211,4 +210,3 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
 });
-export { Product };

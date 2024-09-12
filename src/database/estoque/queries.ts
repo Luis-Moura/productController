@@ -1,5 +1,5 @@
-import { Product } from "../app/pages/Estoque";
-import { getDatabase } from "./database";
+import { Product } from "@/src//models/Product";
+import { getDatabase } from "../database";
 
 export const createTable = async () => {
     const database = await getDatabase();
@@ -19,7 +19,7 @@ export const getProducts = async () => {
     return await database.getAllAsync<Product>("SELECT * FROM estoque");
 };
 
-export const addProductStatement = async (descricao: string) => {
+export const addProductStatement = async () => {
     const database = await getDatabase();
 
     const statement = await database.prepareAsync(
@@ -39,4 +39,22 @@ export const deleteProductStatemente = async () => {
     return statement;
 };
 
+export const updateProductAddStatement = async () => {
+    const database = await getDatabase();
 
+    const statement = await database.prepareAsync(
+        "UPDATE estoque SET quantidade = quantidade + 1 WHERE id = $id",
+    );
+
+    return statement;
+};
+
+export const updateProductRemoveStatement = async () => {
+    const database = await getDatabase();
+
+    const statement = await database.prepareAsync(
+        "UPDATE estoque SET quantidade = quantidade - 1 WHERE id = $id",
+    );
+
+    return statement;
+};

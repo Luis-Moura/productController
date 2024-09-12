@@ -1,34 +1,41 @@
 {
-    "expo": {
-        "name": "productController",
-        "slug": "productController",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
-        "scheme": "productController",
-        "userInterfaceStyle": "automatic",
-        "splash": {
-            "image": "./assets/images/splash.png",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            }
-        },
-        "web": {
-            "bundler": "metro",
-            "output": "static",
-            "favicon": "./assets/images/favicon.png"
-        },
-        "plugins": ["expo-router"],
-        "experiments": {
-            "typedRoutes": true
-        }
+  "expo": {
+    "name": "productController",
+    "slug": "productController",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "productcontroller",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.luisdev1.productController"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "56092d23-36a6-49cd-8535-7a47af3dc8c5"
+      }
     }
+  }
 }
